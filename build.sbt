@@ -3,20 +3,18 @@ import sbt.inc.Analysis
 
 crossScalaVersions := Seq("2.11.8", "2.10.6")
 
-val buildVersion = "3.3.0"
+organization in Global := "com.hypertino"
 
-val buildScalaVersion = "2.11.8"
+val buildVersion = "3.4-SNAPSHOT"
 
 val buildSettings = Defaults.coreDefaultSettings ++ Seq(
-  organization := "org.scalamock",
   version := buildVersion,
-  scalaVersion := buildScalaVersion,
+  scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
   scalacOptions in (Compile, doc) ++= Opts.doc.title("ScalaMock") ++ Opts.doc.version(buildVersion) ++ Seq("-doc-root-content", "rootdoc.txt", "-version"),
   resolvers += Resolver.sonatypeRepo("releases"),
   resolvers += Resolver.sonatypeRepo("snapshots"),
   resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
-
   publishTo <<= version { v =>
     val nexus = "https://oss.sonatype.org/"
     if (v.trim.endsWith("SNAPSHOT"))
@@ -25,6 +23,7 @@ val buildSettings = Defaults.coreDefaultSettings ++ Seq(
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
   },
   pomIncludeRepository := { _ => false },
+  publishArtifact := false,
   publishArtifact in Test := false,
   pomExtra := <url>http://scalamock.org/</url>
     <licenses>
@@ -45,10 +44,12 @@ val buildSettings = Defaults.coreDefaultSettings ++ Seq(
         <url>http://paulbutcher.com/</url>
       </developer>
     </developers>,
-
+  pgpSecretRing := file("./travis/ht-oss-private.asc"),
+  pgpPublicRing := file("./travis/ht-oss-public.asc"),
+  usePgpKeyHex("F8CDEF49B0EDEDCC"),
+  pgpPassphrase := Option(System.getenv().get("oss_gpg_passphrase")).map(_.toCharArray),
   shellPrompt := ShellPrompt.buildShellPrompt
 )
-
 
 val specs2 = "org.specs2" %% "specs2" % "2.4.16"
 
@@ -56,14 +57,14 @@ val specs2 = "org.specs2" %% "specs2" % "2.4.16"
 // and this caused problems with referencing class org.scalatest.events.Event
 // val scalaXml = "org.scala-lang.modules" %% "scala-xml" % "1.0.3" % "test"
 
-
 lazy val core = crossProject.settings(buildSettings:_*)
   .in(file("core"))
   .settings(
     name := "ScalaMock Core",
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaVersion.value
-    )
+    ),
+    publishArtifact := true
   )
 
 lazy val jsCore = core.js
@@ -74,7 +75,8 @@ lazy val scalatestSupport = crossProject.settings(buildSettings:_*)
   .in(file("frameworks/scalatest"))
   .settings(
     name := "ScalaMock ScalaTest Support",
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0"
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0",
+    publishArtifact := true
   )
   .dependsOn(core)
 
@@ -86,7 +88,9 @@ lazy val specs2Support = crossProject.settings(buildSettings:_*)
   .in(file("frameworks/specs2"))
   .settings(
     name := "ScalaMock Specs2 Support",
-    libraryDependencies += specs2
+    libraryDependencies += specs2,
+    publish := (),
+    publishLocal := ()
   )
   .dependsOn(core)
 
@@ -119,6 +123,11 @@ lazy val examples = crossProject.settings(buildSettings:_*)
 lazy val jsExamples = examples.js
 
 lazy val jvmExamples = examples.jvm
+
+credentials ++= (for {
+  username <- Option(System.getenv().get("sonatype_username"))
+  password <- Option(System.getenv().get("sonatype_password"))
+} yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
 
 publishArtifact := false
 
