@@ -6,10 +6,10 @@ if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "scalajs-hypertin
   echo "$key_password" | gpg --passphrase-fd 0 ./travis/ht-oss-private.asc.gpg
 
   if grep "version\s*:=.*SNAPSHOT" build.sbt; then
-    sbt +test +publishSigned
+    sbt test publishSigned
   else
-    sbt +test +publishSigned sonatypeReleaseAll
+    sbt test publishSigned sonatypeReleaseAll
   fi
 else
-  sbt +test
+  sbt test
 fi
