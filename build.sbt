@@ -91,7 +91,9 @@ lazy val specs2Support = crossProject.settings(buildSettings:_*)
     name := "ScalaMock Specs2 Support",
     libraryDependencies += specs2,
     publish := (),
-    publishLocal := ()
+    publishLocal := (),
+    publishArtifact := false,
+    publishArtifact in Test := false
   )
   .dependsOn(core)
 
@@ -104,7 +106,9 @@ lazy val core_tests = crossProject.settings(buildSettings:_*)
   .settings(
     name := "ScalaMock Core Tests",
     publish := (),
-    publishLocal := ()
+    publishLocal := (),
+    publishArtifact := false,
+    publishArtifact in Test := false
   )
   .dependsOn(scalatestSupport)
 
@@ -117,7 +121,9 @@ lazy val examples = crossProject.settings(buildSettings:_*)
   .settings(
     name := "ScalaMock Examples",
     publish := (),
-    publishLocal := ()
+    publishLocal := (),
+    publishArtifact := false,
+    publishArtifact in Test := false
   )
   .dependsOn(scalatestSupport, specs2Support)
 
