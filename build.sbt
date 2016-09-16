@@ -15,13 +15,6 @@ val buildSettings = Defaults.coreDefaultSettings ++ Seq(
   resolvers += Resolver.sonatypeRepo("releases"),
   resolvers += Resolver.sonatypeRepo("snapshots"),
   resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
-  publishTo <<= version { v =>
-    val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
   pomIncludeRepository := { _ => false },
   publishArtifact := false,
   publishArtifact in Test := false,
@@ -48,6 +41,14 @@ val buildSettings = Defaults.coreDefaultSettings ++ Seq(
   pgpPublicRing := file("./travis/ht-oss-public.asc"),
   usePgpKeyHex("F8CDEF49B0EDEDCC"),
   pgpPassphrase := Option(System.getenv().get("oss_gpg_passphrase")).map(_.toCharArray),
+  publishMavenStyle := true,
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+  },
   shellPrompt := ShellPrompt.buildShellPrompt
 )
 
