@@ -5,7 +5,7 @@ if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "scalajs-hypertin
   echo "$key_password" | gpg --passphrase-fd 0 ./travis/ht-oss-public.asc.gpg
   echo "$key_password" | gpg --passphrase-fd 0 ./travis/ht-oss-private.asc.gpg
 
-  if grep "version\s*:=.*SNAPSHOT" build.sbt; then
+  if grep "buildVersion\s*=.*-SNAPSHOT" build.sbt; then
     sbt test +coreJVM/publishSigned +coreJS/publishSigned +scalatestSupportJVM/publishSigned +scalatestSupportJS/publishSigned
   else
     sbt test +coreJVM/publishSigned +coreJS/publishSigned +scalatestSupportJVM/publishSigned +scalatestSupportJS/publishSigned sonatypeReleaseAll

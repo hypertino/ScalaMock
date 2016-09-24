@@ -25,7 +25,6 @@ import org.scalamock.function._
 import org.scalamock.util.{MacroAdapter, MacroUtils}
 import MacroAdapter.Context
 
-
 //! TODO - get rid of this nasty two-stage construction when https://issues.scala-lang.org/browse/SI-5521 is fixed
 class MockMaker[C <: Context](val ctx: C) {
   class MockMakerInner[T: ctx.WeakTypeTag](mockContext: ctx.Expr[MockContext], stub: Boolean, mockName: Option[ctx.Expr[String]]) {
@@ -208,16 +207,38 @@ class MockMaker[C <: Context](val ctx: C) {
     }
 
     // def <init>() = super.<init>()
-    def initDef =
+    def initDef = {
+      val primaryConstructorOpt = typeToMock.members.collectFirst {
+        case method: MethodSymbolApi if method.isPrimaryConstructor =>
+          method
+      }
+
+      val constructorArgumentsTypes = primaryConstructorOpt.map { constructor =>
+        val constructorTypeContext = constructor.typeSignatureIn(typeToMock)
+        val constructorArguments = constructorTypeContext.paramLists
+        constructorArguments.map { case symbols =>
+          symbols.map(_.typeSignatureIn(constructorTypeContext))
+        }
+      }
+
+      val superCall: Tree = Select(Super(This(typeNames.EMPTY), typeNames.EMPTY), termNames.CONSTRUCTOR)
+      val constructorCall = constructorArgumentsTypes.fold(Apply(superCall, Nil).asInstanceOf[Tree]) { symbols =>
+        symbols.foldLeft(superCall) {
+          case (acc, symbol) =>
+            Apply(acc, symbol.map(tpe => q"null.asInstanceOf[$tpe]"))
+        }
+      }
+
       DefDef(
         Modifiers(),
-        TermName("<init>"),
+        termNames.CONSTRUCTOR,
         List(),
         List(List()),
         TypeTree(),
         Block(
-          List(callConstructor(Super(This(TypeName("")), TypeName("")))),
+          List(constructorCall),
           Literal(Constant(()))))
+    }
 
     // new <|typeToMock|> { <|members|> }
     def anonClass(members: List[Tree]) =
