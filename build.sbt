@@ -96,11 +96,7 @@ lazy val specs2Support = crossProject.settings(buildSettings:_*)
   .in(file("frameworks/specs2"))
   .settings(
     name := "ScalaMock Specs2 Support",
-    libraryDependencies += specs2,
-    publish := (),
-    publishLocal := (),
-    publishArtifact := false,
-    publishArtifact in Test := false
+    libraryDependencies += specs2
   )
   .dependsOn(core)
 
@@ -111,11 +107,7 @@ lazy val jvmSpecs2Support = specs2Support.jvm
 lazy val core_tests = crossProject.settings(buildSettings:_*)
   .in(file("core_tests"))
   .settings(
-    name := "ScalaMock Core Tests",
-    publish := (),
-    publishLocal := (),
-    publishArtifact := false,
-    publishArtifact in Test := false
+    name := "ScalaMock Core Tests"
   )
   .dependsOn(scalatestSupport)
 
@@ -126,11 +118,7 @@ lazy val jvmcore_tests = core_tests.jvm
 lazy val examples = crossProject.settings(buildSettings:_*)
   .in(file("examples"))
   .settings(
-    name := "ScalaMock Examples",
-    publish := (),
-    publishLocal := (),
-    publishArtifact := false,
-    publishArtifact in Test := false
+    name := "ScalaMock Examples"
   )
   .dependsOn(scalatestSupport, specs2Support)
 
@@ -138,16 +126,22 @@ lazy val jsExamples = examples.js
 
 lazy val jvmExamples = examples.jvm
 
-credentials ++= (for {
+lazy val root = crossProject
+  .in(file("."))
+  .settings(
+    name := "ScalaMock"
+  )
+  .dependsOn(scalatestSupport, specs2Support)
+
+credentials in Global ++= (for {
   username <- Option(System.getenv().get("sonatype_username"))
   password <- Option(System.getenv().get("sonatype_password"))
 } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
 
-publishArtifact := false
+publishArtifact in Global := false
 
-publishArtifact in Test := false
+publish in Global := ()
 
-publish := ()
+publishLocal in Global := ()
 
-publishLocal := ()
-
+packagedArtifacts in Global := Map.empty
