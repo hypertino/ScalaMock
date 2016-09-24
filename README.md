@@ -1,4 +1,14 @@
-# ScalaMock [![Build Status](https://travis-ci.org/paulbutcher/ScalaMock.svg?branch=master)](https://travis-ci.org/paulbutcher/ScalaMock)
+# ScalaMock [![Build Status](https://travis-ci.org/hypertino/ScalaMock.svg?branch=master)](https://travis-ci.org/hypertino/ScalaMock)
+
+## Fork information
+
+This is a Scala.js enabled fork of Paul Butcher's Scala Mock. I'm planning to maintain this until this pull request is merged: https://github.com/paulbutcher/ScalaMock/pull/152 
+
+Use may use forked snapshot artefact from sonatype:
+
+```scala
+"com.hypertino" %%% "scalamock-scalatest-support" % "3.4-SNAPSHOT" % "test"
+```
 
 Native Scala mocking.
 
