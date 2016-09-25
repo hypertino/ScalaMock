@@ -5,12 +5,15 @@ import scala.language.implicitConversions
 class MacroAdapter[C <: MacroAdapter.Context](val ctx2: C) {
   import ctx2.universe._
 
+  val noSelfType = ValDef(Modifiers(Flag.PRIVATE), nme.WILDCARD, TypeTree(NoType), EmptyTree)
+  val termNames = nme
+  val typeNames = tpnme
+
   def TermName(s: String) = newTermName(s)
   def TypeName(s: String) = newTypeName(s)
   def freshName(prefix: String) = ctx2.fresh(prefix)
   def freshTerm(prefix: String): TermName = TermName(freshName(prefix))
 
-  val noSelfType = ValDef(Modifiers(Flag.PRIVATE), nme.WILDCARD, TypeTree(NoType), EmptyTree)
   def internalTypeRef(pre: Type, sym: Symbol, args: List[Type]) = TypeRef(pre, sym, args)
   def internalSuperType(thistpe: Type, supertpe: Type): Type = SuperType(thistpe, supertpe)
   def internalThisType(thistpe: Symbol) = ThisType(thistpe)
@@ -24,7 +27,7 @@ class MacroAdapter[C <: MacroAdapter.Context](val ctx2: C) {
       }
     }
 
-    def typeArgs: List[ctx2.universe.Type] = {
+    def typeArgs: List[Type] = {
       t match {
         case TypeRef(typ, tsym, typeParams) ⇒
           typeParams
@@ -36,6 +39,10 @@ class MacroAdapter[C <: MacroAdapter.Context](val ctx2: C) {
 
     def dealias:Type = t.normalize
     def resultType: Type = t
+  }
+
+  implicit class MethodExtenders(m: MethodSymbolApi) {
+    def paramLists = m.paramss
   }
 }
 

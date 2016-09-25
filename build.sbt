@@ -3,13 +3,14 @@ import sbt.inc.Analysis
 
 crossScalaVersions := Seq("2.11.8", "2.10.6")
 
+scalaVersion := "2.11.8"
+
 organization in Global := "com.hypertino"
 
 val buildVersion = "3.4-SNAPSHOT"
 
 val buildSettings = Defaults.coreDefaultSettings ++ Seq(
   version := buildVersion,
-  scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
   scalacOptions in (Compile, doc) ++= Opts.doc.title("ScalaMock") ++ Opts.doc.version(buildVersion) ++ Seq("-doc-root-content", "rootdoc.txt", "-version"),
   resolvers += Resolver.sonatypeRepo("releases"),
