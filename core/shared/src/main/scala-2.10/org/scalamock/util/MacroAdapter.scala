@@ -11,8 +11,7 @@ class MacroAdapter[C <: MacroAdapter.Context](val ctx2: C) {
 
   def TermName(s: String) = newTermName(s)
   def TypeName(s: String) = newTypeName(s)
-  def freshName(prefix: String) = ctx2.fresh(prefix)
-  def freshTerm(prefix: String): TermName = TermName(freshName(prefix))
+  def freshTerm(prefix: String): TermName = TermName(ctx2.fresh(prefix))
 
   def internalTypeRef(pre: Type, sym: Symbol, args: List[Type]) = TypeRef(pre, sym, args)
   def internalSuperType(thistpe: Type, supertpe: Type): Type = SuperType(thistpe, supertpe)
