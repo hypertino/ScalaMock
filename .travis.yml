@@ -1,21 +1,31 @@
 language: scala
 
 scala:
+  - "2.10.6"
+  - "2.11.8"
   - "2.12.1"
 
 jdk:
   - oraclejdk8
-
+  - oraclejdk7
+  
 node_js:
   - "6"
 
 script: "$TRAVIS_BUILD_DIR/travis/build.sh"
 sudo: false
+
+matrix:
+  exclude:
+  - scala: "2.12.1" 
+    jdk: oraclejdk7
+
 cache:
   directories:
   - "$HOME/.m2"
   - "$HOME/.ivy2"
   - "$HOME/.sbt"
+
 env:
   global:
   - secure: U3+2FqtRx08MCt7O5RHnm30orqqBagkwq8kLTY5TQ3AKZKuhfZbO7ONWNHivTj8aHQwDCizTBAmx69Uik6KMb0rQuS6gsiyDUN/6PqY7twteUrQ52d3tBLXbyze9il0tvsKurQCxx/iEX15hHRseFn+YSva/9E4+HNYgL05oZKDdn64gHY0MBvkUgl0Y8KNV8skuLzT1W5xKU1xRWogyjyrVWZsceDgkYnuHj8hdJnVtouOXR7AziXov6bNi4AEG9x8tZ0CbpintRvbSu2tdLzufq3AEWHKJmqnuAYjbdoILFvWsVFiglP7mT4csZkG3+P0feZ5IFPD/rLs1OJesR30H43jXmjffDcqUccrTQhqMWGXU/gwK7tPkrCsXyEpuFHorgtNm6BH7BTOGVUUaBDFMghjiIZ+/cQV1UXbUfp+fmYjaB6OBaabxhqSzukXIDb59Ig0lL0NuXzfeaZcOONJAKWQ7DvMxfHckRq5KoDVQBtFAm8hZeQYCMngqu3bk/oxkdHORizVw8nmjaeBjxVOqYtPtDBBhMwaQ4bCZVDLw1NLzBGGtmkRoBKWmbHji1Fn26EIzaBqx/YSGDxOe6OEFi109/0l2/2U56gRoSRya0IQVS+1T7oHaUf1Sc3kbBLDot4dBS7qoJXDXnOeQY9e+r5rNbBWfF5jEFXvH+6c=
