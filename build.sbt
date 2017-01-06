@@ -1,5 +1,4 @@
 organization in Global := "com.hypertino"
-val buildVersion = "3.4-SNAPSHOT"
 scalaVersion in ThisBuild := "2.11.8"
 crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.8", "2.12.1")
 
