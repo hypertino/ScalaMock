@@ -21,8 +21,7 @@ lazy val scalaXml = libraryDependencies ++= (
   if (scalaVersion.value < "2.11") Nil else Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.6" % Test)
 )
 
-val commonSettings = Defaults.coreDefaultSettings ++ Seq(
-  organization := "org.scalamock",
+val commonSettings = Defaults.coreDefaultSettings ++ Seq(  
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
   scalacOptions in (Compile, doc) ++= Opts.doc.title("ScalaMock") ++ Opts.doc.version(version.value) ++ Seq("-doc-root-content", "rootdoc.txt", "-version"),
   pomIncludeRepository := { _ => false },
