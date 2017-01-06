@@ -6,9 +6,9 @@ if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "scalajs-hypertin
   echo "$key_password" | gpg --passphrase-fd 0 ./travis/ht-oss-private.asc.gpg
   export SBT_OPTS=-XX:MaxMetaspaceSize=512m
   if grep "buildVersion\s*=.*-SNAPSHOT" build.sbt; then
-    sbt +test +coreJVM/publishSigned +coreJS/publishSigned +scalatestSupportJVM/publishSigned +scalatestSupportJS/publishSigned
+    sbt +test +scalamock-coreJVM/publishSigned +scalamock-coreJS/publishSigned +scalamock-scalatest-supportJVM/publishSigned +scalamock-scalatest-supportJS/publishSigned
   else
-    sbt +test +coreJVM/publishSigned +coreJS/publishSigned +scalatestSupportJVM/publishSigned +scalatestSupportJS/publishSigned sonatypeReleaseAll
+    sbt +test +scalamock-coreJVM/publishSigned +scalamock-coreJS/publishSigned +scalamock-scalatest-supportJVM/publishSigned +scalamock-scalatest-supportJS/publishSigned sonatypeReleaseAll
   fi
 else
   sbt test
